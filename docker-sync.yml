@@ -1,0 +1,13 @@
+##
+# Configuration file for docker-sync command.
+# Reference: https://github.com/EugenMayer/docker-sync
+#
+
+version: "2"
+options:
+  verbose: true
+  compose-dev-file-path: 'docker-compose.override-osx.yml'
+
+syncs:
+  swmigration-sync:
+    src: './magento'

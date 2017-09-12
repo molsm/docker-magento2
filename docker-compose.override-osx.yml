@@ -1,0 +1,32 @@
+##
+# This file is intended for OSX users in order to run M2 faster.
+# See docker-sync.yml for reference
+#
+
+version: "2"
+services:
+  appdata:
+    volumes:
+      - swmigration-sync:/var/www/magento:nocopy
+
+  varnish:
+    ports:
+      - 80:80
+
+  web:
+    ports:
+      - 443:443
+
+  cli:
+    environment:
+      - ENABLE_SENDMAIL=false
+    volumes:
+      - ~/.bash_history:/root/.bash_history
+
+  db:
+    ports:
+      - 3306:3306
+
+volumes:
+  swmigration-sync:
+    external: true
