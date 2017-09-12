@@ -3,7 +3,7 @@ services:
   varnish:
     image: meanbee/magento2-varnish:latest
     environment:
-      - VIRTUAL_HOST=magento2.docker
+      - VIRTUAL_HOST=migration.dev
       - VIRTUAL_PORT=80
       - HTTPS_METHOD=noredirect
     ports:
@@ -28,8 +28,9 @@ services:
       #- HTTPS_METHOD=noredirect
 
   fpm:
-    hostname: fpm.magento2.docker
-    image: meanbee/magento2-php:7.1-fpm
+    hostname: fpm.migration.dev
+    build:
+      context: 7.0-fpm/
     ports:
       - 9000
     links:
@@ -53,12 +54,17 @@ services:
       - TERM=meh
 
   cli:
-    hostname: cli.magento2.docker
-    image: meanbee/magento2-php:7.1-cli
+    hostname: cli.migration.dev
+    build:
+      context: 7.0-cli/
+    tty: true
+    ports:
+      - 22
     links:
       - db
     volumes:
       - ~/.composer/cache:/root/.composer/cache
+      - ~/.composer/cache:/var/www/.composer/cache
     volumes_from:
       - appdata
     env_file:
@@ -70,7 +76,7 @@ services:
       - M2SETUP_DB_NAME=magento2
       - M2SETUP_DB_USER=magento2
       - M2SETUP_DB_PASSWORD=magento2
-      - M2SETUP_BASE_URL=http://magento2.docker/
+      - M2SETUP_BASE_URL=http://migration.dev/
       # - M2SETUP_SECURE_BASE_URL=https://magento2.docker/
       - M2SETUP_BACKEND_FRONTNAME=admin
       - M2SETUP_ADMIN_FIRSTNAME=Admin
@@ -79,10 +85,10 @@ services:
       - M2SETUP_ADMIN_USER=admin
       - M2SETUP_ADMIN_PASSWORD=password1
       - M2SETUP_VERSION=2.1.*
-      # - M2SETUP_USE_SAMPLE_DATA=true
+      - M2SETUP_USE_SAMPLE_DATA=true
 
   cron:
-    image: meanbee/magento2-php:7.1-cli
+    image: meanbee/magento2-php:7.0-cli
     hostname: magento2-cron.docker
     command: run-cron
     env_file:
